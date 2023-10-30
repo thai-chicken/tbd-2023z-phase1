@@ -85,6 +85,7 @@ If you see a warning like this -- please enable the workflows:
 ...and repush your changes!
 
 Once all Pull Requests checks **have passed** please merge your PR and wait until your release job finishes.
+
 7. Navigate to the Vertex AI Workbench menu item, find your notebook on the list, press **CONNECT** and follow
 the instructions
 ![img.png](doc/figures/workbench.png)
