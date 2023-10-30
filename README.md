@@ -1,6 +1,6 @@
-# TBD Workshop 1.
-dd
-## Workshop goals
+# TBD-2023-phase1
+
+## Phase1 goals
 1. Learn how to provision computing resources for running Big Data analyses using the Infrastructure as Code (IaC) approach.
 2. Learn how to set up opinionated CI/CD pipelines to deploy cloud infrastructure. 
 3. Learn how to utilize linters for detecting security vulnerabilities in cloud infrastructure.
