@@ -62,21 +62,27 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 
    ***place the screenshot from infracost output here***
 
-10. Create a BigQuery dataset and an external table
+10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation.
+
+    ***place your estimation and references here***
+
+    ***what are the options for cost optimization?***
+    
+12. Create a BigQuery dataset and an external table
     
     ***place the code and output here***
    
     ***why does ORC not require a table schema?***
   
-11. Start an interactive session from Vertex AI workbench (steps 7-9 in README):
+13. Start an interactive session from Vertex AI workbench (steps 7-9 in README):
 
     ***place the screenshot of notebook here***
    
-12. Find and correct the error in spark-job.py
+14. Find and correct the error in spark-job.py
 
     ***describe the cause and how to find the error***
 
-13. Additional tasks using Terraform:
+15. Additional tasks using Terraform:
 
     1. Add support for arbitrary machine types and worker nodes for a Dataproc cluster and JupyterLab instance
 
