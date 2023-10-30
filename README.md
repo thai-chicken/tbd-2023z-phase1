@@ -15,11 +15,11 @@ to Google Cloud.
 ### Software
 * Google Cloud SDK
 * gsutil
-* pre-commit
+* pre-commit (optional)
 * Terraform ( [Requirements](#Requirements) )
 * Python ~>3.8
 * Linux/MacOS
-* [pre-commit-terraform dependencies](https://github.com/antonbabenko/pre-commit-terraform)
+* [pre-commit-terraform dependencies](https://github.com/antonbabenko/pre-commit-terraform) (optional)
 
 ### GCP
 * Redeem a GCP coupon to create a billing account
@@ -54,7 +54,7 @@ cd ..
 * Edit `cicd_bootstrap/conf/github_actions.tfvars` to set `github_org` and `github_repo`, e.g.:
 ```text
   github_org  = "mwiewior"
-  github_repo = "tbd-workshop-1"
+  github_repo = "tbd-2023z-phase1"
 ```
 * Init state file and set env variables
 ```bash
@@ -75,7 +75,7 @@ cd ..
 Please do not edit and hardcode these values in a YAML but set the Github Actions secrets instead
 while preserving the secret names, i.e. `GCP_WORKLOAD_IDENTITY_PROVIDER_NAME` and `GCP_WORKLOAD_IDENTITY_SA_EMAIL`.
 ![img.png](doc/figures/secrets.png)
-5. Install and configure `pre-commit`
+5. Install and configure `pre-commit` (optional)
 ```bash
 pre-commit install
 ```
@@ -99,7 +99,7 @@ python3.8 -m ipykernel install --user --name pyspark
 
 
 10. **IMPORTANT**
-:exclamation: :exclamation: :exclamation: Please remember to **destroy all** the resources after the workshop:
+:exclamation: :exclamation: :exclamation: Please remember to **destroy all** the resources after the work:
 
 ```bash
 terraform init -backend-config=env/backend.tfvars
