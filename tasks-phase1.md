@@ -4,10 +4,11 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 
 
 1. Authors:
-
-   ***enter your group nr***
-
-   ***link to forked repo***
+    - Łukasz Staniszewski
+    - Mateusz Szczepanowski
+    - Albert Ściseł
+    - Group number: 5
+    - Forked repo link: https://github.com/thai-chicken/tbd-2023z-phase1
    
 2. Fork https://github.com/bdg-tbd/tbd-2023z-phase1 and follow all steps in README.md.
 
