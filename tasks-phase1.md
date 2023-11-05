@@ -182,10 +182,140 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 ***place your diagram here***
 
 ## 9. Add costs by entering the expected consumption into Infracost
+We used `infracost-usage.yml` file to define the expected consumption. The file is located in the root directory of the project. Content (note: the values are only for example purposes):
 
-***place the expected consumption you entered here***
+```yaml
+version: 0.1
 
-***place the screenshot from infracost output here***
+resource_usage:
+  #  The following usage values apply to individual resources and override any value defined in the resource_type_default_usage section.
+  # All values are commented-out, you can uncomment resources and customize as needed.
+  #
+  module.vpc.module.cloud-router.google_compute_router_nat.nats["nat-gateway"]:
+    assigned_vms: 1 # Number of VM instances assigned to the NAT gateway
+    monthly_data_processed_gb: 2.0 # Monthly data processed (ingress and egress) by the NAT gateway in GB
+  module.data-pipelines.google_storage_bucket.tbd-code-bucket:
+    storage_gb: 3.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
+    monthly_egress_data_transfer_gb:
+      same_continent: 4.0 # Same continent.
+      worldwide: 5.0 # Worldwide excluding Asia, Australia.
+      asia: 3.0 # Asia excluding China, but including Hong Kong.
+      china: 2.0 # China excluding Hong Kong.
+      australia: 0.0 # Australia.
+  module.data-pipelines.google_storage_bucket.tbd-data-bucket:
+    storage_gb: 3.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
+    monthly_egress_data_transfer_gb:
+      same_continent: 4.0 # Same continent.
+      worldwide: 5.0 # Worldwide excluding Asia, Australia.
+      asia: 3.0 # Asia excluding China, but including Hong Kong.
+      china: 2.0 # China excluding Hong Kong.
+      australia: 0.0 # Australia.
+  module.gcr.google_container_registry.registry:
+    storage_gb: 3.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
+    monthly_egress_data_transfer_gb:
+      same_continent: 4.0 # Same continent.
+      worldwide: 5.0 # Worldwide excluding Asia, Australia.
+      asia: 3.0 # Asia excluding China, but including Hong Kong.
+      china: 2.0 # China excluding Hong Kong.
+      australia: 0.0 # Australia.
+  module.vertex_ai_workbench.google_storage_bucket.notebook-conf-bucket:
+    storage_gb: 10.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 100 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 150 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    monthly_data_retrieval_gb: 8.0 # Monthly amount of data retrieved in GB.
+    monthly_egress_data_transfer_gb:
+      same_continent: 4.0 # Same continent.
+      worldwide: 5.0 # Worldwide excluding Asia, Australia.
+      asia: 3.0 # Asia excluding China, but including Hong Kong.
+      china: 2.0 # China excluding Hong Kong.
+      australia: 0.0 # Australia.
+```
+
+Infracost output assuming usage above:
+```
+> infracost breakdown --path . --usage-file infracost-usage.yml
+
+Evaluating Terraform directory at .
+  ✔ Downloading Terraform modules
+  ✔ Evaluating Terraform directory
+Warning: Input values were not provided for following Terraform variables: "variable.project_name", "variable.ai_notebook_instance_owner". Use --terraform-var-file or --terraform-var to
+ specify them.
+  ✔ Retrieving cloud prices to calculate costs
+
+Project: thai-chicken/tbd-2023z-phase1
+
+ Name                                                                                Monthly Qty  Unit             Monthly Cost
+
+ module.data-pipelines.google_storage_bucket.tbd-code-bucket
+ ├─ Storage (standard)                                                                         3  GiB                     $0.06
+ ├─ Object adds, bucket/object list (class A)                                             0.0005  10k operations          $0.00
+ ├─ Object gets, retrieve bucket/object metadata (class B)                                 0.001  10k operations          $0.00
+ └─ Network egress
+    ├─ Data transfer in same continent                                                         4  GB                      $0.08
+    ├─ Data transfer to worldwide excluding Asia, Australia (first 1TB)                        5  GB                      $0.60
+    ├─ Data transfer to Asia excluding China, but including Hong Kong (first 1TB)              3  GB                      $0.36
+    ├─ Data transfer to China excluding Hong Kong (first 1TB)                                  2  GB                      $0.46
+    └─ Data transfer to Australia (first 1TB)                                      Monthly cost depends on usage: $0.19 per GB
+
+ module.data-pipelines.google_storage_bucket.tbd-data-bucket
+ ├─ Storage (standard)                                                                         3  GiB                     $0.06
+ ├─ Object adds, bucket/object list (class A)                                             0.0005  10k operations          $0.00
+ ├─ Object gets, retrieve bucket/object metadata (class B)                                 0.001  10k operations          $0.00
+ └─ Network egress
+    ├─ Data transfer in same continent                                                         4  GB                      $0.08
+    ├─ Data transfer to worldwide excluding Asia, Australia (first 1TB)                        5  GB                      $0.60
+    ├─ Data transfer to Asia excluding China, but including Hong Kong (first 1TB)              3  GB                      $0.36
+    ├─ Data transfer to China excluding Hong Kong (first 1TB)                                  2  GB                      $0.46
+    └─ Data transfer to Australia (first 1TB)                                      Monthly cost depends on usage: $0.19 per GB
+
+ module.gcr.google_container_registry.registry
+ ├─ Storage (standard)                                                                         3  GiB                     $0.08
+ ├─ Object adds, bucket/object list (class A)                                             0.0005  10k operations          $0.00
+ ├─ Object gets, retrieve bucket/object metadata (class B)                                 0.001  10k operations          $0.00
+ └─ Network egress
+    ├─ Data transfer in same continent                                                         4  GB                      $0.08
+    ├─ Data transfer to worldwide excluding Asia, Australia (first 1TB)                        5  GB                      $0.60
+    ├─ Data transfer to Asia excluding China, but including Hong Kong (first 1TB)              3  GB                      $0.36
+    ├─ Data transfer to China excluding Hong Kong (first 1TB)                                  2  GB                      $0.46
+    └─ Data transfer to Australia (first 1TB)                                      Monthly cost depends on usage: $0.19 per GB
+
+ module.vertex_ai_workbench.google_storage_bucket.notebook-conf-bucket
+ ├─ Storage (standard)                                                                        10  GiB                     $0.20
+ ├─ Object adds, bucket/object list (class A)                                               0.01  10k operations          $0.00
+ ├─ Object gets, retrieve bucket/object metadata (class B)                                 0.015  10k operations          $0.00
+ └─ Network egress
+    ├─ Data transfer in same continent                                                         4  GB                      $0.08
+    ├─ Data transfer to worldwide excluding Asia, Australia (first 1TB)                        5  GB                      $0.60
+    ├─ Data transfer to Asia excluding China, but including Hong Kong (first 1TB)              3  GB                      $0.36
+    ├─ Data transfer to China excluding Hong Kong (first 1TB)                                  2  GB                      $0.46
+    └─ Data transfer to Australia (first 1TB)                                      Monthly cost depends on usage: $0.19 per GB
+
+ module.vpc.module.cloud-router.google_compute_router_nat.nats["nat-gateway"]
+ ├─ Assigned VMs (first 32)                                                                  730  VM-hours                $1.02
+ └─ Data processed                                                                             2  GB                      $0.09
+
+ OVERALL TOTAL                                                                                                            $7.51
+──────────────────────────────────
+31 cloud resources were detected:
+∙ 5 were estimated, all of which include usage-based costs, see https://infracost.io/usage-file
+∙ 23 were free, rerun with --show-skipped to see details
+∙ 3 are not supported yet, rerun with --show-skipped to see details
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+┃ Project                                            ┃ Monthly cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━┫
+┃ thai-chicken/tbd-2023z-phase1                      ┃ $8           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━┛
+```
 
 ## 10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation
 
