@@ -319,6 +319,11 @@ Project: thai-chicken/tbd-2023z-phase1
 
 ## 10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation
 
+Resources not supported by infracost yet:
++ 1 x google_composer_environment - Cloud Composer
++ 1 x google_dataproc_cluster - Dataproc
++ 1 x google_notebooks_instance - Vertex AI Workbench
+
 ***place your estimation and references here***
 
 ***what are the options for cost optimization?***
@@ -327,8 +332,33 @@ Project: thai-chicken/tbd-2023z-phase1
 
 ***place the code and output here***
 
+```bash
+> bq mk tbd_dataset
+
+Welcome to BigQuery! This script will walk you through the
+process of initializing your .bigqueryrc configuration file.
+
+First, we need to set up your credentials if they do not
+already exist.
+
+Setting project_id tbd-2023z as the default.
+
+BigQuery configuration complete! Type "bq" to get started.
+
+Dataset 'tbd-2023z:tbd_dataset' successfully created.
+> bq mk --table --external_table_definition=@ORC=gs://cloud-samples-data/bigquery/us-states/us-states.orc tbd_dataset.tbd_table
+Table 'tbd-2023z:tbd_dataset.tbd_table' successfully created.
+```
+
 ***why does ORC not require a table schema?***
-  
+Since ORC files add table schema in the file footer, it's unnecessary to specify the schema while creating a table in BigQuery since BigQuery can directly read the schema from the ORC file.
+
+The metadata in an ORC file includes information such as (i.a.):
+- The number of rows in the file
+- Column schema
+- File-level statistics
+This essentially allows BigQuery to derive the needed table schema directly from the ORC file, eliminating the need to separately define it.
+
 ## 12. Start an interactive session from Vertex AI workbench (steps 7-9 in README)
 
 ***place the screenshot of notebook here***
