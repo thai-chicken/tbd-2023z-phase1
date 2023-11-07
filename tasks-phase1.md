@@ -169,7 +169,6 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 
 <http://tbd-cluster-m:8088/cluster>
 
-
 ![img.png](doc/figures/task7.png)
 
 ## 8. Draw an architecture diagram (e.g. in draw.io) that includes
@@ -182,6 +181,7 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 ***place your diagram here***
 
 ## 9. Add costs by entering the expected consumption into Infracost
+
 We used `infracost-usage.yml` file to define the expected consumption. The file is located in the root directory of the project. Content (note: the values are only for example purposes):
 
 ```yaml
@@ -362,6 +362,8 @@ This essentially allows BigQuery to derive the needed table schema directly from
 ## 12. Start an interactive session from Vertex AI workbench (steps 7-9 in README)
 
 ***place the screenshot of notebook here***
+
+![img.png](doc/figures/task12.png)
 
 ## 13. Find and correct the error in spark-job.py
 
