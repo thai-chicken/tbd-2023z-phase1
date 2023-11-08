@@ -140,7 +140,7 @@ No resources.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ai_notebook_instance_owner"></a> [ai\_notebook\_instance\_owner](#input\_ai\_notebook\_instance\_owner) | Vertex AI workbench owner | `string` | n/a | yes |
 | <a name="input_dataproc_num_workers"></a> [dataproc\_num\_workers](#input\_dataproc\_num\_workers) | Number of dataproc workers | `number` | `2` | no |
-| <a name="input_dataproc_worker_machine_type"></a> [dataproc\_worker\_machine\_type](#input\_dataproc\_worker\_machine\_type) | Dataproc worker machine type | `string` | `"e2-medium"` | no |
+| <a name="input_dataproc_worker_machine_type"></a> [dataproc\_worker\_machine\_type](#input\_dataproc\_worker\_machine\_type) | Dataproc worker machine type | `string` | `"e2-standard-2"` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | GCP region | `string` | `"europe-west1"` | no |
 | <a name="input_vertex_machine_type"></a> [vertex\_machine\_type](#input\_vertex\_machine\_type) | Vertex AI machine type | `string` | `"e2-standard-2"` | no |
