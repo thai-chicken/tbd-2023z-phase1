@@ -22,7 +22,7 @@ variable "dataproc_num_workers" {
 
 variable "dataproc_worker_machine_type" {
   type        = string
-  default     = "e2-medium"
+  default     = "e2-standard-2"
   description = "Dataproc worker machine type"
 }
 
