@@ -177,8 +177,7 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 - Description of the components of service accounts
 - List of buckets for disposal
 - Description of network communication (ports, why it is necessary to specify the host for the driver) of Apache Spark running from Vertex AI Workbech
-
-***place your diagram here***
+![img.png](doc/figures/TBD_task_8_diagram.png)
 
 ## 9. Add costs by entering the expected consumption into Infracost
 
