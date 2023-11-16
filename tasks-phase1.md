@@ -369,11 +369,107 @@ This essentially allows BigQuery to derive the needed table schema directly from
 
 ***describe the cause and how to find the error***
 
+- Cause: the reason why the spark job did not work was the given name of the bucket in which the data processed by the job should be stored. The solution was to change this name to the name of our bucket in one of the lines in the code of the spark-job.py file.
+
+- How to find: in the dataproc jobs logs, where we found out that out spark job fails, we looked into the error message and there was such a log fragment:
+
+```bash
+{
+  "code" : 404,
+  "errors" : [ {
+    "domain" : "global",
+    "message" : "The specified bucket does not exist.",
+    "reason" : "notFound"
+  } ],
+  "message" : "The specified bucket does not exist."
+}
+```
+
+Corrected code in `spark-job.py`:
+```
+
+# change to your data bucket
+DATA_BUCKET = "gs://tbd-2023z-304098-data/data/shakespeare/"
+
+```
+
+After that, the job passed successfully in the dataproc jobs logs:
+
+![img.png](doc/figures/task13.png)
+
+Also, here are the logs from the sumbition of the job:
+
+```bash
+mszczepanowski@C15581 tbd-2023z-phase1 % gcloud dataproc jobs submit pyspark modules/data-pipeline/resources/spark-job.py --cluster=tbd-cluster --region=europe-west1
+Job [05fab19412154cfd84ec9a5d666c5302] submitted.
+
+...
+
+The top words in shakespeare are
++----+--------------+
+|word|sum_word_count|
++----+--------------+
+| the|         25568|
+|   I|         21028|
+| and|         19649|
+|  to|         17361|
+|  of|         16438|
+|   a|         13409|
+| you|         12527|
+|  my|         11291|
+|  in|         10589|
+|  is|          8735|
+|that|          8561|
+| not|          8395|
+|  me|          8030|
+| And|          7780|
+|with|          7224|
+|  it|          7137|
+| his|          6811|
+|  be|          6724|
+|your|          6244|
+| for|          6154|
++----+--------------+
+only showing top 20 rows
+
+...
+
+jobUuid: b077d36a-fb62-3972-883a-e0182b98541f
+placement:
+  clusterName: tbd-cluster
+  clusterUuid: 328d2fb5-dafb-401b-af06-f7250ab9b3f5
+pysparkJob:
+  mainPythonFileUri: gs://dataproc-staging-europe-west1-519557031031-7e61v90i/google-cloud-dataproc-metainfo/328d2fb5-dafb-401b-af06-f7250ab9b3f5/jobs/05fab19412154cfd84ec9a5d666c5302/staging/spark-job.py
+reference:
+  jobId: 05fab19412154cfd84ec9a5d666c5302
+  projectId: tbd-2023z-304098
+status:
+  state: DONE
+  stateStartTime: '2023-11-16T20:32:09.528879Z'
+statusHistory:
+- state: PENDING
+  stateStartTime: '2023-11-16T20:30:05.012613Z'
+- state: SETUP_DONE
+  stateStartTime: '2023-11-16T20:30:05.053908Z'
+- details: Agent reported job success
+  state: RUNNING
+  stateStartTime: '2023-11-16T20:30:05.294453Z'
+yarnApplications:
+- name: Shakespeare WordCount
+  progress: 1.0
+  state: FINISHED
+  trackingUrl: http://tbd-cluster-m.c.tbd-2023z-304098.internal.:8088/proxy/application_1700160019211_0005/
+```
+
 ## 14. Additional tasks using Terraform
 
 1. Add support for arbitrary machine types and worker nodes for a Dataproc cluster and JupyterLab instance
 
 ***place the link to the modified file and inserted terraform code***
+
+We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
+
+- In the `dataproc` module we added the machine_type
 
 3. Add support for preemptible/spot instances in a Dataproc cluster
 
