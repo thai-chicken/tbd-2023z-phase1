@@ -333,22 +333,29 @@ Resources not supported by infracost yet:
 
 ***place the code and output here***
 
+We used `.orc` file that has been generated in our bucket while doing the 13th task.
+
 ```bash
-> bq mk tbd_dataset
+> bq mk tbd_dataset_11
+Dataset 'tbd-2023z:tbd_dataset_11' successfully created.
 
-Welcome to BigQuery! This script will walk you through the
-process of initializing your .bigqueryrc configuration file.
+> bq mk --table --external_table_definition=@ORC=gs://tbd-2023z-304098-data/data/shakespeare/part-00000-445fbfc0-ae6e-4b8a-989f-de87ce8fc6c5-c000.snappy.orc tbd_dataset_11.tbd_table
+Table 'tbd-2023z:tbd_dataset_11.tbd_table' successfully created.
 
-First, we need to set up your credentials if they do not
-already exist.
+> bq show --schema --format=prettyjson tbd-2023z:tbd_dataset_11.tbd_table
+[
+  {
+    "mode": "NULLABLE",
+    "name": "word",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sum_word_count",
+    "type": "INTEGER"
+  }
+]
 
-Setting project_id tbd-2023z as the default.
-
-BigQuery configuration complete! Type "bq" to get started.
-
-Dataset 'tbd-2023z:tbd_dataset' successfully created.
-> bq mk --table --external_table_definition=@ORC=gs://cloud-samples-data/bigquery/us-states/us-states.orc tbd_dataset.tbd_table
-Table 'tbd-2023z:tbd_dataset.tbd_table' successfully created.
 ```
 
 ***why does ORC not require a table schema?***
@@ -564,6 +571,12 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
     machine_type = var.dataproc_worker_machine_type
     num_workers  = var.dataproc_num_workers
   }
+  ```
+
+- Now you can specify the number of worker nodes and machine type for Dataproc cluster and JupyterLab instance in the `variables.tf` file in the root directory:
+
+  ```bash
+  terraform plan -var="vertex_machine_type=e2-medium" -var="dataproc_worker_machine_type=e2-standard-2" -var="dataproc_num_workers=5"
   ```
 
 2. Add support for preemptible/spot instances in a Dataproc cluster
