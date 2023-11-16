@@ -241,6 +241,7 @@ resource_usage:
 ```
 
 Infracost output assuming usage above:
+
 ```
 > infracost breakdown --path . --usage-file infracost-usage.yml
 
@@ -320,9 +321,9 @@ Project: thai-chicken/tbd-2023z-phase1
 ## 10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation
 
 Resources not supported by infracost yet:
-+ 1 x google_composer_environment - Cloud Composer
-+ 1 x google_dataproc_cluster - Dataproc
-+ 1 x google_notebooks_instance - Vertex AI Workbench
+- 1 x google_composer_environment - Cloud Composer
+- 1 x google_dataproc_cluster - Dataproc
+- 1 x google_notebooks_instance - Vertex AI Workbench
 
 ***place your estimation and references here***
 
@@ -354,6 +355,7 @@ Table 'tbd-2023z:tbd_dataset.tbd_table' successfully created.
 Since ORC files add table schema in the file footer, it's unnecessary to specify the schema while creating a table in BigQuery since BigQuery can directly read the schema from the ORC file.
 
 The metadata in an ORC file includes information such as (i.a.):
+
 - The number of rows in the file
 - Column schema
 - File-level statistics
@@ -386,6 +388,7 @@ This essentially allows BigQuery to derive the needed table schema directly from
 ```
 
 Corrected code in `spark-job.py`:
+
 ```
 
 # change to your data bucket
@@ -469,9 +472,101 @@ yarnApplications:
 
 We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
 
-- In the `dataproc` module we added the machine_type
+- In the `dataproc` module we added a new variable `num_workers` in the [`dataproc/variables.tf`](modules/dataproc/variables.tf), which represents number of worker nodes and is set default to 2:
 
-3. Add support for preemptible/spot instances in a Dataproc cluster
+  ```tf
+  variable "num_workers" {
+    type        = number
+    default     = 2
+    description = "Number of worker nodes"
+  }
+  ```
+
+  Also, we had to include this variable in the [`dataproc/main.tf`](modules/dataproc/main.tf) file, in the `worker_config` block:
+
+  ```tf
+  worker_config {
+    num_instances = var.num_workers
+    machine_type  = var.machine_type
+    disk_config {
+      boot_disk_type    = "pd-standard"
+      boot_disk_size_gb = 100
+    }
+  }
+  ```
+
+- In the `vertex-ai-workbench` module we added a new variable `machine_type` in the [`vertex-ai-workbench/variables.tf`](modules/vertex-ai-workbench/variables.tf), which represents machine type for notebook instance and is set default to "e2-standard-2":
+
+  ```tf
+  variable "machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Machine type for notebook instance"
+  }
+  ```
+
+  Also, in the [`vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, we had to include this variable:
+
+  ```tf
+  resource "google_notebooks_instance" "tbd_notebook" {
+    #checkov:skip=CKV2_GCP_18: "Ensure GCP network defines a firewall and does not use the default firewall"
+    depends_on   = [google_project_service.notebooks]
+    location     = local.zone
+    machine_type = var.machine_type
+    name         = "${var.project_name}-notebook"
+    ...
+  }
+  ```
+
+- Finally, in the root directory, we added 3 new variables in the [`variables.tf`](variables.tf) file:
+
+  ```tf
+  variable "dataproc_num_workers" {
+    type        = number
+    default     = 2
+    description = "Number of dataproc workers"
+  }
+
+  variable "dataproc_worker_machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Dataproc worker machine type"
+  }
+
+  variable "vertex_machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Vertex AI machine type"
+  }
+  ```
+
+  And, in the [`main.tf`](main.tf) file, we had to include these variables in the `dataproc` and `vertex-ai-workbench` modules:
+
+  ```tf
+  module "vertex_ai_workbench" {
+    depends_on   = [module.jupyter_docker_image, module.vpc]
+    source       = "./modules/vertex-ai-workbench"
+    project_name = var.project_name
+    region       = var.region
+    network      = module.vpc.network.network_id
+    subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+    machine_type = var.vertex_machine_type
+
+    ai_notebook_instance_owner = var.ai_notebook_instance_owner
+  }
+  ...
+  module "dataproc" {
+    depends_on   = [module.vpc]
+    source       = "./modules/dataproc"
+    project_name = var.project_name
+    region       = var.region
+    subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+    machine_type = var.dataproc_worker_machine_type
+    num_workers  = var.dataproc_num_workers
+  }
+  ```
+
+2. Add support for preemptible/spot instances in a Dataproc cluster
 
 ***place the link to the modified file and inserted terraform code***
 
