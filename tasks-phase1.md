@@ -580,7 +580,53 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
 
 2. Add support for preemptible/spot instances in a Dataproc cluster
 
-***place the link to the modified file and inserted terraform code***
+To add preemptible instances we have created new config block inside cluster config in `modules\dataproc\main.tf` file:
+
+```tf
+preemptible_worker_config {
+    num_instances = var.preemptible_num_workers
+    disk_config {
+      boot_disk_type    = "pd-standard"
+      boot_disk_size_gb = 100
+    }
+  }
+```
+Next thing we need to do was add variable named `preemptible_num_workers` in `modules\dataproc\variables.tf`:
+
+```tf
+variable "preemptible_num_workers" {
+  description = "The number of preemptible worker nodes"
+  type        = number
+  default     = 0
+}
+```
+
+Now we move on to root directory, add variable `variables.tf`:
+
+```tf
+variable "preemptible_num_workers" {
+  type        = number
+  default     = 0
+  description = "Number of preemptible dataproc workers"
+}
+```
+
+Last step is to update model `dataproc` in `main.tf` in root directory, by setting value to `preemptible_num_workers`:
+
+```tf
+module "dataproc" {
+  depends_on   = [module.vpc]
+  source       = "./modules/dataproc"
+  project_name = var.project_name
+  region       = var.region
+  subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+  machine_type = var.dataproc_worker_machine_type
+  num_workers  = var.dataproc_num_workers
+  preemptible_num_workers = var.preemptible_num_workers
+}
+
+```
+
 
 3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
 
