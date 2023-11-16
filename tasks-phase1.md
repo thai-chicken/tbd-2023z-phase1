@@ -7,8 +7,8 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 ### 1.1. Team
 
 - Łukasz Staniszewski
-- Mateusz Szczepanowski
 - Albert Ściseł
+- Mateusz Szczepanowski
 
 ### 1.2. Info
 
