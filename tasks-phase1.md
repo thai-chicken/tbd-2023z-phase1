@@ -478,7 +478,7 @@ yarnApplications:
 
 We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
 
-- In the `dataproc` module we added a new variable `num_workers` in the [`dataproc/variables.tf`](modules/dataproc/variables.tf), which represents number of worker nodes and is set default to 2:
+- In the `dataproc` module we added a new variable `num_workers` in the [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf), which represents number of worker nodes and is set default to 2:
 
   ```tf
   variable "num_workers" {
@@ -488,7 +488,7 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
   }
   ```
 
-  Also, we had to include this variable in the [`dataproc/main.tf`](modules/dataproc/main.tf) file, in the `worker_config` block:
+  Also, we had to include this variable in the [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file, in the `worker_config` block:
 
   ```tf
   worker_config {
@@ -501,7 +501,7 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
   }
   ```
 
-- In the `vertex-ai-workbench` module we added a new variable `machine_type` in the [`vertex-ai-workbench/variables.tf`](modules/vertex-ai-workbench/variables.tf), which represents machine type for notebook instance and is set default to "e2-standard-2":
+- In the `vertex-ai-workbench` module we added a new variable `machine_type` in the [`modules/vertex-ai-workbench/variables.tf`](modules/vertex-ai-workbench/variables.tf), which represents machine type for notebook instance and is set default to "e2-standard-2":
 
   ```tf
   variable "machine_type" {
@@ -511,7 +511,7 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
   }
   ```
 
-  Also, in the [`vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, we had to include this variable:
+  Also, in the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, we had to include this variable:
 
   ```tf
   resource "google_notebooks_instance" "tbd_notebook" {
@@ -580,7 +580,7 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
 
 2. Add support for preemptible/spot instances in a Dataproc cluster
 
-To add preemptible instances we have created new config block inside cluster config in `modules\dataproc\main.tf` file:
+To add preemptible instances we have created new config block inside cluster config in [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file:
 
 ```tf
 preemptible_worker_config {
@@ -591,7 +591,7 @@ preemptible_worker_config {
     }
   }
 ```
-Next thing we need to do was add variable named `preemptible_num_workers` in `modules\dataproc\variables.tf`:
+Next thing we need to do was add variable named `preemptible_num_workers` in [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf):
 
 ```tf
 variable "preemptible_num_workers" {
@@ -601,7 +601,7 @@ variable "preemptible_num_workers" {
 }
 ```
 
-Now we move on to root directory, add variable `variables.tf`:
+Now we move on to root directory, add a new variable to [`variables.tf`](variables.tf) file:
 
 ```tf
 variable "preemptible_num_workers" {
@@ -611,7 +611,7 @@ variable "preemptible_num_workers" {
 }
 ```
 
-Last step is to update model `dataproc` in `main.tf` in root directory, by setting value to `preemptible_num_workers`:
+Last step is to update module `dataproc` in [`main.tf`](main.tf) in root directory, by setting value to `preemptible_num_workers`:
 
 ```tf
 module "dataproc" {
@@ -627,10 +627,31 @@ module "dataproc" {
 
 ```
 
-
 3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
 
 ***place the link to the modified file and inserted terraform code***
+
+We've changed ony the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
+
+```tf
+  # Enable Secure Boot TASK 14.3
+  shielded_instance_config {
+    enable_secure_boot = true
+  }
+
+  ...
+
+  # Disable root access TASK 14.3
+  resource "google_project_organization_policy" "disable_root_access" {
+    project    = var.project_name
+    constraint = "constraints/ainotebooks.disableRootAccess"
+
+    boolean_policy {
+      enforced = true
+    }
+  }
+```
+
 
 4. (Optional) Get access to Apache Spark WebUI
 
