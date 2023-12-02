@@ -1,4 +1,4 @@
-version: 0.2
+version: 0.1
 
 resource_usage:
   #  The following usage values apply to individual resources and override any value defined in the resource_type_default_usage section.
