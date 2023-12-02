@@ -570,7 +570,7 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
   }
   ```
 
-- Now you can specify the number of worker nodes and machine type for Dataproc cluster and JupyterLab instance in the `variables.tf` file in the root directory:
+- Now you can specify the number of worker nodes and machine type for Dataproc cluster and JupyterLab instance in the `variables.tf` file in the root directory, for example:
 
   ```bash
   terraform plan -var="vertex_machine_type=e2-medium" -var="dataproc_worker_machine_type=e2-standard-2" -var="dataproc_num_workers=5"
