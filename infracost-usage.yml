@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 
 resource_usage:
   #  The following usage values apply to individual resources and override any value defined in the resource_type_default_usage section.
@@ -8,46 +8,46 @@ resource_usage:
     assigned_vms: 1 # Number of VM instances assigned to the NAT gateway
     monthly_data_processed_gb: 2.0 # Monthly data processed (ingress and egress) by the NAT gateway in GB
   module.data-pipelines.google_storage_bucket.tbd-code-bucket:
-    storage_gb: 3.0 # Total size of bucket in GB.
-    monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
-    monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
-    monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
+    storage_gb: 2.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 10 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 25 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    monthly_data_retrieval_gb: 4.0 # Monthly amount of data retrieved in GB.
     monthly_egress_data_transfer_gb:
-      same_continent: 4.0 # Same continent.
-      worldwide: 5.0 # Worldwide excluding Asia, Australia.
-      asia: 3.0 # Asia excluding China, but including Hong Kong.
-      china: 2.0 # China excluding Hong Kong.
+      same_continent: 2.0 # Same continent.
+      worldwide: 3.0 # Worldwide excluding Asia, Australia.
+      asia: 0.0 # Asia excluding China, but including Hong Kong.
+      china: 0.0 # China excluding Hong Kong.
       australia: 0.0 # Australia.
   module.data-pipelines.google_storage_bucket.tbd-data-bucket:
-    storage_gb: 3.0 # Total size of bucket in GB.
-    monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
-    monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    storage_gb: 5.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 10 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 25 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
     monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
     monthly_egress_data_transfer_gb:
       same_continent: 4.0 # Same continent.
       worldwide: 5.0 # Worldwide excluding Asia, Australia.
-      asia: 3.0 # Asia excluding China, but including Hong Kong.
-      china: 2.0 # China excluding Hong Kong.
+      asia: 0.0 # Asia excluding China, but including Hong Kong.
+      china: 0.0 # China excluding Hong Kong.
       australia: 0.0 # Australia.
   module.gcr.google_container_registry.registry:
-    storage_gb: 3.0 # Total size of bucket in GB.
+    storage_gb: 8.0 # Total size of bucket in GB.
     monthly_class_a_operations: 5 # Monthly number of class A operations (object adds, bucket/object list).
     monthly_class_b_operations: 10 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
-    monthly_data_retrieval_gb: 10.0 # Monthly amount of data retrieved in GB.
+    monthly_data_retrieval_gb: 12.0 # Monthly amount of data retrieved in GB.
     monthly_egress_data_transfer_gb:
-      same_continent: 4.0 # Same continent.
-      worldwide: 5.0 # Worldwide excluding Asia, Australia.
-      asia: 3.0 # Asia excluding China, but including Hong Kong.
-      china: 2.0 # China excluding Hong Kong.
+      same_continent: 6.0 # Same continent.
+      worldwide: 8.0 # Worldwide excluding Asia, Australia.
+      asia: 0.0 # Asia excluding China, but including Hong Kong.
+      china: 0.0 # China excluding Hong Kong.
       australia: 0.0 # Australia.
   module.vertex_ai_workbench.google_storage_bucket.notebook-conf-bucket:
-    storage_gb: 10.0 # Total size of bucket in GB.
-    monthly_class_a_operations: 100 # Monthly number of class A operations (object adds, bucket/object list).
-    monthly_class_b_operations: 150 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
+    storage_gb: 4.0 # Total size of bucket in GB.
+    monthly_class_a_operations: 8 # Monthly number of class A operations (object adds, bucket/object list).
+    monthly_class_b_operations: 15 # Monthly number of class B operations (object gets, retrieve bucket/object metadata).
     monthly_data_retrieval_gb: 8.0 # Monthly amount of data retrieved in GB.
     monthly_egress_data_transfer_gb:
       same_continent: 4.0 # Same continent.
-      worldwide: 5.0 # Worldwide excluding Asia, Australia.
-      asia: 3.0 # Asia excluding China, but including Hong Kong.
-      china: 2.0 # China excluding Hong Kong.
+      worldwide: 6.0 # Worldwide excluding Asia, Australia.
+      asia: 0.0 # Asia excluding China, but including Hong Kong.
+      china: 0.0 # China excluding Hong Kong.
       australia: 0.0 # Australia.
