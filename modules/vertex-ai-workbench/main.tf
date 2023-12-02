@@ -71,7 +71,8 @@ resource "google_notebooks_instance" "tbd_notebook" {
   # end
   instance_owners = [var.ai_notebook_instance_owner]
   metadata = {
-    vmDnsSetting : "GlobalDefault"
+    vmDnsSetting          = "GlobalDefault"
+    notebook-disable-root = true
   }
   post_startup_script = "gs://${google_storage_bucket_object.post-startup.bucket}/${google_storage_bucket_object.post-startup.name}"
 }
@@ -87,11 +88,11 @@ resource "google_project_iam_binding" "token_creator_role" {
 }
 
 # Disable root access TASK 14.3
-resource "google_project_organization_policy" "disable_root_access" {
-  project    = var.project_name
-  constraint = "constraints/ainotebooks.disableRootAccess"
+# resource "google_project_organization_policy" "disable_root_access" {
+#   project    = var.project_name
+#   constraint = "constraints/ainotebooks.disableRootAccess"
 
-  boolean_policy {
-    enforced = true
-  }
-}
+#   boolean_policy {
+#     enforced = true
+#   }
+# }
