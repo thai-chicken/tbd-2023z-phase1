@@ -30,3 +30,9 @@ variable "num_workers" {
   default     = 2
   description = "Number of worker nodes"
 }
+
+variable "preemptible_num_workers" {
+  description = "The number of preemptible worker nodes"
+  type        = number
+  default     = 0
+}

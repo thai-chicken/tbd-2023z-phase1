@@ -20,6 +20,12 @@ variable "dataproc_num_workers" {
   description = "Number of dataproc workers"
 }
 
+variable "preemptible_num_workers" {
+  type        = number
+  default     = 0
+  description = "Number of preemptible dataproc workers"
+}
+
 variable "dataproc_worker_machine_type" {
   type        = string
   default     = "e2-standard-2"

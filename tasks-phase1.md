@@ -177,8 +177,7 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 - Description of the components of service accounts
 - List of buckets for disposal
 - Description of network communication (ports, why it is necessary to specify the host for the driver) of Apache Spark running from Vertex AI Workbech
-
-***place your diagram here***
+![img.png](doc/figures/TBD_task_8_diagram.png)
 
 ## 9. Add costs by entering the expected consumption into Infracost
 
@@ -241,6 +240,7 @@ resource_usage:
 ```
 
 Infracost output assuming usage above:
+
 ```
 > infracost breakdown --path . --usage-file infracost-usage.yml
 
@@ -320,9 +320,9 @@ Project: thai-chicken/tbd-2023z-phase1
 ## 10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation
 
 Resources not supported by infracost yet:
-+ 1 x google_composer_environment - Cloud Composer
-+ 1 x google_dataproc_cluster - Dataproc
-+ 1 x google_notebooks_instance - Vertex AI Workbench
+- 1 x google_composer_environment - Cloud Composer
+- 1 x google_dataproc_cluster - Dataproc
+- 1 x google_notebooks_instance - Vertex AI Workbench
 
 ***place your estimation and references here***
 
@@ -332,28 +332,36 @@ Resources not supported by infracost yet:
 
 ***place the code and output here***
 
+We used `.orc` file that has been generated in our bucket while doing the 13th task.
+
 ```bash
-> bq mk tbd_dataset
+> bq mk tbd_dataset_11
+Dataset 'tbd-2023z:tbd_dataset_11' successfully created.
 
-Welcome to BigQuery! This script will walk you through the
-process of initializing your .bigqueryrc configuration file.
+> bq mk --table --external_table_definition=@ORC=gs://tbd-2023z-304098-data/data/shakespeare/part-00000-445fbfc0-ae6e-4b8a-989f-de87ce8fc6c5-c000.snappy.orc tbd_dataset_11.tbd_table
+Table 'tbd-2023z:tbd_dataset_11.tbd_table' successfully created.
 
-First, we need to set up your credentials if they do not
-already exist.
+> bq show --schema --format=prettyjson tbd-2023z:tbd_dataset_11.tbd_table
+[
+  {
+    "mode": "NULLABLE",
+    "name": "word",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sum_word_count",
+    "type": "INTEGER"
+  }
+]
 
-Setting project_id tbd-2023z as the default.
-
-BigQuery configuration complete! Type "bq" to get started.
-
-Dataset 'tbd-2023z:tbd_dataset' successfully created.
-> bq mk --table --external_table_definition=@ORC=gs://cloud-samples-data/bigquery/us-states/us-states.orc tbd_dataset.tbd_table
-Table 'tbd-2023z:tbd_dataset.tbd_table' successfully created.
 ```
 
 ***why does ORC not require a table schema?***
 Since ORC files add table schema in the file footer, it's unnecessary to specify the schema while creating a table in BigQuery since BigQuery can directly read the schema from the ORC file.
 
 The metadata in an ORC file includes information such as (i.a.):
+
 - The number of rows in the file
 - Column schema
 - File-level statistics
@@ -369,19 +377,281 @@ This essentially allows BigQuery to derive the needed table schema directly from
 
 ***describe the cause and how to find the error***
 
+- Cause: the reason why the spark job did not work was the given name of the bucket in which the data processed by the job should be stored. The solution was to change this name to the name of our bucket in one of the lines in the code of the spark-job.py file.
+
+- How to find: in the dataproc jobs logs, where we found out that out spark job fails, we looked into the error message and there was such a log fragment:
+
+```bash
+{
+  "code" : 404,
+  "errors" : [ {
+    "domain" : "global",
+    "message" : "The specified bucket does not exist.",
+    "reason" : "notFound"
+  } ],
+  "message" : "The specified bucket does not exist."
+}
+```
+
+Corrected code in `spark-job.py`:
+
+```
+
+# change to your data bucket
+DATA_BUCKET = "gs://tbd-2023z-304098-data/data/shakespeare/"
+
+```
+
+After that, the job passed successfully in the dataproc jobs logs:
+
+![img.png](doc/figures/task13.png)
+
+Also, here are the logs from the sumbition of the job:
+
+```bash
+mszczepanowski@C15581 tbd-2023z-phase1 % gcloud dataproc jobs submit pyspark modules/data-pipeline/resources/spark-job.py --cluster=tbd-cluster --region=europe-west1
+Job [05fab19412154cfd84ec9a5d666c5302] submitted.
+
+...
+
+The top words in shakespeare are
++----+--------------+
+|word|sum_word_count|
++----+--------------+
+| the|         25568|
+|   I|         21028|
+| and|         19649|
+|  to|         17361|
+|  of|         16438|
+|   a|         13409|
+| you|         12527|
+|  my|         11291|
+|  in|         10589|
+|  is|          8735|
+|that|          8561|
+| not|          8395|
+|  me|          8030|
+| And|          7780|
+|with|          7224|
+|  it|          7137|
+| his|          6811|
+|  be|          6724|
+|your|          6244|
+| for|          6154|
++----+--------------+
+only showing top 20 rows
+
+...
+
+jobUuid: b077d36a-fb62-3972-883a-e0182b98541f
+placement:
+  clusterName: tbd-cluster
+  clusterUuid: 328d2fb5-dafb-401b-af06-f7250ab9b3f5
+pysparkJob:
+  mainPythonFileUri: gs://dataproc-staging-europe-west1-519557031031-7e61v90i/google-cloud-dataproc-metainfo/328d2fb5-dafb-401b-af06-f7250ab9b3f5/jobs/05fab19412154cfd84ec9a5d666c5302/staging/spark-job.py
+reference:
+  jobId: 05fab19412154cfd84ec9a5d666c5302
+  projectId: tbd-2023z-304098
+status:
+  state: DONE
+  stateStartTime: '2023-11-16T20:32:09.528879Z'
+statusHistory:
+- state: PENDING
+  stateStartTime: '2023-11-16T20:30:05.012613Z'
+- state: SETUP_DONE
+  stateStartTime: '2023-11-16T20:30:05.053908Z'
+- details: Agent reported job success
+  state: RUNNING
+  stateStartTime: '2023-11-16T20:30:05.294453Z'
+yarnApplications:
+- name: Shakespeare WordCount
+  progress: 1.0
+  state: FINISHED
+  trackingUrl: http://tbd-cluster-m.c.tbd-2023z-304098.internal.:8088/proxy/application_1700160019211_0005/
+```
+
 ## 14. Additional tasks using Terraform
 
 1. Add support for arbitrary machine types and worker nodes for a Dataproc cluster and JupyterLab instance
 
 ***place the link to the modified file and inserted terraform code***
 
-3. Add support for preemptible/spot instances in a Dataproc cluster
+We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
 
-***place the link to the modified file and inserted terraform code***
+- In the `dataproc` module we added a new variable `num_workers` in the [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf), which represents number of worker nodes and is set default to 2:
+
+  ```tf
+  variable "num_workers" {
+    type        = number
+    default     = 2
+    description = "Number of worker nodes"
+  }
+  ```
+
+  Also, we had to include this variable in the [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file, in the `worker_config` block:
+
+  ```tf
+  worker_config {
+    num_instances = var.num_workers
+    machine_type  = var.machine_type
+    disk_config {
+      boot_disk_type    = "pd-standard"
+      boot_disk_size_gb = 100
+    }
+  }
+  ```
+
+- In the `vertex-ai-workbench` module we added a new variable `machine_type` in the [`modules/vertex-ai-workbench/variables.tf`](modules/vertex-ai-workbench/variables.tf), which represents machine type for notebook instance and is set default to "e2-standard-2":
+
+  ```tf
+  variable "machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Machine type for notebook instance"
+  }
+  ```
+
+  Also, in the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, we had to include this variable:
+
+  ```tf
+  resource "google_notebooks_instance" "tbd_notebook" {
+    #checkov:skip=CKV2_GCP_18: "Ensure GCP network defines a firewall and does not use the default firewall"
+    depends_on   = [google_project_service.notebooks]
+    location     = local.zone
+    machine_type = var.machine_type
+    name         = "${var.project_name}-notebook"
+    ...
+  }
+  ```
+
+- Finally, in the root directory, we added 3 new variables in the [`variables.tf`](variables.tf) file:
+
+  ```tf
+  variable "dataproc_num_workers" {
+    type        = number
+    default     = 2
+    description = "Number of dataproc workers"
+  }
+
+  variable "dataproc_worker_machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Dataproc worker machine type"
+  }
+
+  variable "vertex_machine_type" {
+    type        = string
+    default     = "e2-standard-2"
+    description = "Vertex AI machine type"
+  }
+  ```
+
+  And, in the [`main.tf`](main.tf) file, we had to include these variables in the `dataproc` and `vertex-ai-workbench` modules:
+
+  ```tf
+  module "vertex_ai_workbench" {
+    depends_on   = [module.jupyter_docker_image, module.vpc]
+    source       = "./modules/vertex-ai-workbench"
+    project_name = var.project_name
+    region       = var.region
+    network      = module.vpc.network.network_id
+    subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+    machine_type = var.vertex_machine_type
+
+    ai_notebook_instance_owner = var.ai_notebook_instance_owner
+  }
+  ...
+  module "dataproc" {
+    depends_on   = [module.vpc]
+    source       = "./modules/dataproc"
+    project_name = var.project_name
+    region       = var.region
+    subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+    machine_type = var.dataproc_worker_machine_type
+    num_workers  = var.dataproc_num_workers
+  }
+  ```
+
+- Now you can specify the number of worker nodes and machine type for Dataproc cluster and JupyterLab instance in the `variables.tf` file in the root directory:
+
+  ```bash
+  terraform plan -var="vertex_machine_type=e2-medium" -var="dataproc_worker_machine_type=e2-standard-2" -var="dataproc_num_workers=5"
+  ```
+
+2. Add support for preemptible/spot instances in a Dataproc cluster
+
+To add preemptible instances we have created new config block inside cluster config in [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file:
+
+```tf
+preemptible_worker_config {
+    num_instances = var.preemptible_num_workers
+    disk_config {
+      boot_disk_type    = "pd-standard"
+      boot_disk_size_gb = 100
+    }
+  }
+```
+Next thing we need to do was add variable named `preemptible_num_workers` in [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf):
+
+```tf
+variable "preemptible_num_workers" {
+  description = "The number of preemptible worker nodes"
+  type        = number
+  default     = 0
+}
+```
+
+Now we move on to root directory, add a new variable to [`variables.tf`](variables.tf) file:
+
+```tf
+variable "preemptible_num_workers" {
+  type        = number
+  default     = 0
+  description = "Number of preemptible dataproc workers"
+}
+```
+
+Last step is to update module `dataproc` in [`main.tf`](main.tf) in root directory, by setting value to `preemptible_num_workers`:
+
+```tf
+module "dataproc" {
+  depends_on   = [module.vpc]
+  source       = "./modules/dataproc"
+  project_name = var.project_name
+  region       = var.region
+  subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+  machine_type = var.dataproc_worker_machine_type
+  num_workers  = var.dataproc_num_workers
+  preemptible_num_workers = var.preemptible_num_workers
+}
+
+```
 
 3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
 
 ***place the link to the modified file and inserted terraform code***
+
+We've changed ony the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
+
+```tf
+  # Enable Secure Boot TASK 14.3
+  shielded_instance_config {
+    enable_secure_boot = true
+  }
+
+  ...
+
+  # Disable root access TASK 14.3
+  resource "google_project_organization_policy" "disable_root_access" {
+    project    = var.project_name
+    constraint = "constraints/ainotebooks.disableRootAccess"
+
+    boolean_policy {
+      enforced = true
+    }
+  }
+```
+
 
 4. (Optional) Get access to Apache Spark WebUI
 
