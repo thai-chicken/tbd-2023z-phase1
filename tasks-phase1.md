@@ -29,7 +29,7 @@
 
 ```
 - resource "google_storage_bucket" "tbd-data-bucket" -> the bucket to store data. Set the following properties:
-  - project  // look for variable in variables.tf
+  - project  // look for variable in variables.tfł
   - name  // look for variable in variables.tf
   - location // look for variable in variables.tf
   - uniform_bucket_level_access = false #tfsec:ignore:google-storage-enable-ubla
@@ -758,8 +758,6 @@ yarnApplications:
   --proxy-server="socks5://localhost:1080" \
   --user-data-dir="/tmp/tbd-cluster-m" http://tbd-cluster-m.c.tbd-2023z-304098.internal.:8088/proxy/application_1701561377793_0013/jobs/
   ```
-
-TODO: check this
 
 - Reached Spark Web UI:
 
