@@ -1,7 +1,3 @@
-IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each work session. You can recreate infrastructure by creating new PR and merging it to master.
-  
-![img.png](doc/figures/destroy.png)
-
 ## 1. Authors
 
 ### 1.1. Team
@@ -15,22 +11,23 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
 - Group number: 5
 - Forked repo link: <https://github.com/thai-chicken/tbd-2023z-phase1>
 
-## 2. Fork <https://github.com/bdg-tbd/tbd-2023z-phase1> and follow all steps in README.md
+## 2. Fork [base repo](https://github.com/bdg-tbd/tbd-2023z-phase1) and follow all steps in README.md
 
-## 3. Select your project and set budget alerts on 5%, 25%, 50%, 80% of 50$ (in cloud console -> billing -> budget & alerts -> create buget; unclick discounts and promotions&others while creating budget)
+## 3. Set budget alerts on 5%, 25%, 50%, 80% of 50$
 
-  Screen:
+<u>Screen:</u>
   
   ![img.png](doc/figures/task3.png)
 
 ## 4. From avaialble Github Actions select and run destroy on main branch
 
-  Screen:
-  
+<u>Screen:</u>  
+
   ![img.png](doc/figures/task4.png)
 
 ## 5. Create new git branch and add two resources in ```/modules/data-pipeline/main.tf```
 
+```
 - resource "google_storage_bucket" "tbd-data-bucket" -> the bucket to store data. Set the following properties:
   - project  // look for variable in variables.tf
   - name  // look for variable in variables.tf
@@ -44,10 +41,11 @@ IMPORTANT ❗ ❗ ❗ Please remember to destroy all the resources after each wo
   - bucket // refere to bucket name from tbd-data-bucket
   - role   // follow the instruction above
   - member = "serviceAccount:${var.data_service_account}"
+```
 
-#### Link to the modified file: <https://github.com/thai-chicken/tbd-2023z-phase1/blob/master/modules/data-pipeline/main.tf>
+<u>Link to the modified file</u>: <https://github.com/thai-chicken/tbd-2023z-phase1/blob/master/modules/data-pipeline/main.tf>
 
-#### Snippet
+<u>Snippet</u>:
 
 ```python
 
@@ -71,17 +69,23 @@ resource "google_storage_bucket_iam_member" "tbd-data-bucket-iam-editor" {
 }
 ```
 
-- Create PR from this branch to **YOUR** master and merge it to make new release, place the screenshot from GA after succesfull application of release with this changes.
 
-#### Screenshot of the release
+### Task: 
+```
+> Create PR from this branch to **YOUR** master and merge it to make new release, place the screenshot from GA after succesfull application of release with this changes.
+```
+
+<u>Screenshot of the release</u>
 
 ![img.png](doc/figures/task5.png)
 
 ## 6. Analyze terraform code. Play with terraform plan, terraform graph to investigate different modules
 
-- describe one selected module and put the output of terraform graph for this module here
+```
+> Describe one selected module and put the output of terraform graph for this module here
+```
 
-#### Chosen module: ```/modules/data-pipeline```
+<u>Chosen module</u>: ```/modules/data-pipeline```
 
 The Terraform module **/modules/data-pipeline/main.tf** presented here defines resources for managing Google Cloud Storage (GCS) buckets and objects within those buckets.
 
@@ -101,7 +105,7 @@ The google_storage_bucket_iam_member resource named tbd-code-bucket-iam-viewer a
 
 There are two google_storage_bucket_object resources defined, job-code and dag-code. Each resource is responsible for creating objects (files) within the GCS buckets.
 
-#### Fragment of plan command output
+<u>Fragment of plan command output</u>:
 
 This command creates an execution plan - it determines what actions are necessary to accomplish the set goal defined in the Terraform files. Can help prevent unwanted changes (what to add, what to change and what to destroy).
 
@@ -155,7 +159,7 @@ Terraform will perform the following actions:
 Plan: 6 to add, 0 to change, 0 to destroy.
 ```
 
-#### Screenshot of terraform graph output
+<u> Screenshot of terraform graph output </u>:
 
 This command generates visual representations of an execution plan. Edges on the graph show dependencies between resources. The graph is in DOT format and can be rendered with tools such as Graphviz.
 
@@ -163,7 +167,9 @@ This command generates visual representations of an execution plan. Edges on the
 
 ## 7. Reach YARN UI
 
-- place the port and the screenshot of YARN UI here
+```
+> place the port and the screenshot of YARN UI here
+```
 
 SSH tunnel is created using local port 1080 and in Chrome we can connect through the proxy with port **8088** using link:
 
@@ -171,12 +177,19 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 
 ![img.png](doc/figures/task7.png)
 
-## 8. Draw an architecture diagram (e.g. in draw.io) that includes
+## 8. Draw an architecture diagram (e.g. in draw.io)
 
+```
+> Diagram should include:
 - VPC topology with service assignment to subnets
 - Description of the components of service accounts
 - List of buckets for disposal
 - Description of network communication (ports, why it is necessary to specify the host for the driver) of Apache Spark running from Vertex AI Workbech
+```
+
+TODO: add descriptions
+
+
 ![img.png](doc/figures/TBD_task_8_diagram.png)
 
 ## 9. Add costs by entering the expected consumption into Infracost
@@ -184,7 +197,7 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 We used `infracost-usage.yml` file to define the expected consumption. The file is located in the root directory of the project. Content (note: the values are only for example purposes):
 
 ```yaml
-version: 0.2
+version: 0.1
 
 resource_usage:
   #  The following usage values apply to individual resources and override any value defined in the resource_type_default_usage section.
@@ -242,7 +255,7 @@ resource_usage:
 Infracost output assuming usage above:
 
 ```
-> infracost breakdown --path . --usage-file infracost-usage.yml
+$ infracost breakdown --path . --usage-file infracost-usage.yml
 
 Evaluating Terraform directory at .
   ✔ Downloading Terraform modules
@@ -317,18 +330,82 @@ Project: thai-chicken/tbd-2023z-phase1
 
 ## 10. Some resources are not supported by infracost yet. Estimate manually total costs of infrastructure based on pricing costs for region used in the project. Include costs of cloud composer, dataproc and AI vertex workbanch and them to infracost estimation
 
-Resources not supported by infracost yet:
+<u>Resources not supported by infracost yet (after running `--show-skipped`):</u>
 - 1 x google_composer_environment - Cloud Composer
 - 1 x google_dataproc_cluster - Dataproc
 - 1 x google_notebooks_instance - Vertex AI Workbench
 
-***place your estimation and references here***
+<u>Our summarized estimation:</u>
 
-***what are the options for cost optimization?***
+| Resource            | Monthly price |
+|---------------------|--------------:|
+| Dataproc            | $217.23       |
+| Cloud Composer      | $419.64       |
+| Vertex AI Workbench | $80.11        |
+| Infracost           | $4.50         |
+| **Total**           | **$721.48**   |
+
+
+<u>References:</u>
+
+| Name            | URL |
+|---------------------|--------------:|
+| Compute engine machines pricing            | <u>[[LINK]](https://cloud.google.com/compute/all-pricing#general_purpose)</u>       |
+| Compute engine disks pricing            | <u>[[LINK]](https://cloud.google.com/compute/disks-image-pricing#disk)</u>       |
+| Dataproc pricing            | <u>[[LINK]](https://cloud.google.com/dataproc/pricing#on_pricing)</u>       |
+| Vertex AI pricing            | <u>[[LINK]](https://cloud.google.com/vertex-ai/pricing#user-managed-notebooks)</u>       |
+| Cloud Composer pricing            | <u>[[LINK]](https://cloud.google.com/composer/pricing#composer-2-pricing)</u>       |
+| **Our Google Cloud Pricing Calculator**  (without Vertex AI fee)         | <u>[[LINK]](https://cloud.google.com/products/calculator/#id=fd4edf2e-09d5-4f7c-b2d2-cdcb8446d74e)</u>   |
+
+<u>Detailed estimation:</u>
+
+**DISCLAIMER: We assumed that our infrastructure is running a whole month, which equals $730$ hours. Also, since our Cloud Composer's number of workers is scalable between $1$ and $3$, we chose $2$ as avarage number of workers.**
+
+1. Cloud Composer
+
+| Resource            | Name                       | Properties        | Price per unit | Number of units | Full monthly price |
+|---------------------|----------------------------|-------------------|----------------|-----------------|-------------------:|
+| Cloud Composer      | Environment fee               | Belgium, Small    |      $0.39 / hour          |         730.000 |    $284.70 |
+| Cloud Composer      | Compute mCPU               | 730 hours x 0.50 x 5 (Scheduler, 2x Worker, Web Server, Triggerer) |         $0.05 / mCPU hour       |           1,825.00 |     $91.25 |
+| Cloud Composer      | Compute Memory             | 730 hours x 1,875.00 GiB x 5 (Scheduler, 2x Worker, Web Server, Triggerer)                |      $0.006 per GiB / hour         |       6,843.750 |     $41.06 |
+| Cloud Composer      | Compute Storage            | 730 hours x 1 GiB x 5 (Scheduler, 2x Worker, Web Server, Triggerer)                |         $0.0002 per GiB / hour      |       3,650.000 |      $0.73 |
+| Cloud Composer      | Database Storage           | 10 GiB is minimum for Database Storage                |      $0.19 per GiB / month          |          10.000 |      $1.90 |
+| --      | --                        | --    | -- | -- |    **$419.64** |
+
+2. Dataproc
+
+| Resource            | Name                       | Properties        | Price per unit | Number of units | Full monthly price |
+|---------------------|----------------------------|-------------------|----------------|-----------------|-----------:|
+| Dataproc            | Compute Engine (master) | 1x e2-standard-2     | $0.0737 / hour        | 730.00   |     $53.81 |
+| Dataproc            | Compute Engine (worker) | 2x e2-standard-2     | $0.0737 / hour | 1460.00 |            $107.62 |
+| Dataproc            | DataProc Service        | 730 hours x 2 vCPUs x 3 engines   | $0.010 per vCPU / hour |     4380.00            |     $43.80 |
+| Dataproc            | Persistent Disk         | Zonal standard PD, 100 GiB x 3 engines |        $0.04 per GB / month        |         300.000 |     $12.00 |
+| --                  | --                      | --                | -- | -- |    **$217.23** |
+
+
+3. Vertex AI Workbench
+
+
+| Resource            | Name                       | Properties        | Price per unit | Number of units | Full monthly price |
+|---------------------|----------------------------|-------------------|----------------|-----------------|-----------:|
+| Vertex AI Workbench | Compute Engine (Instance)            | 1x e2-standard-2     | $0.0737 / hour        | 730.00   |     $53.81 |
+| Vertex AI Workbench | Boot disk (Instance)   | Zonal balanced PD, 150 GiB | $0.10 per GiB / month |         150.000 |      $15.00 |
+| Vertex AI Workbench | Additional disk (Instance) | Zonal standard PD, 100 GiB |        $0.04 per GB / month        |         100.000 |     $4.00 |
+| Vertex AI Workbench | Management fee (User-managed notebooks)             | 730 hours x 2 vCPUs | $0.005 per vCPU / hour | $1460.00 |      $7.30 |
+| -- | --                        | --    | -- | -- |     **$80.11** |
+
+
+<u>Options for a cost optimization</u>
+
+- **Reducing number of workers**: we could reduce the number of Airflow workers to only one in Cloud composer or use only one worker in Dataproc.
+- **Preemptible/spot VMs**: we could use preemptible VMs for Dataproc and Vertex AI Workbench, which are cheaper than standard workers, but can be terminated at any time.
+- **Cheaper machine types**: we could use more relevant to requirements machine types in Dataproc and Vertex AI Workbench.
+- **Long-term commitment**: we could commit to a long-term contract with Google Cloud, which would give us a discount on the services used.
+- **Deleting resources**: we could delete resources that are not used and only invoke them when needed, especially since we use Terraform.
+- **Move to another region**: we could move our infrastructure to another region, where the prices are lower.
+- **Spot instances**: we could use spot instances in Dataproc and Vertex AI Workbench, which are cheaper than standard instances, but can be terminated at any time.
 
 ## 11. Create a BigQuery dataset and an external table
-
-***place the code and output here***
 
 We used `.orc` file that has been generated in our bucket while doing the 13th task.
 
@@ -355,10 +432,10 @@ Table 'tbd-2023z:tbd_dataset_11.tbd_table' successfully created.
 
 ```
 
-***why does ORC not require a table schema?***
-Since ORC files add table schema in the file footer, it's unnecessary to specify the schema while creating a table in BigQuery since BigQuery can directly read the schema from the ORC file.
-
-The metadata in an ORC file includes information such as (i.a.):
+```
+> why does ORC not require a table schema?
+```
+Since ORC files add table schema in the file footer, it's unnecessary to specify the schema while creating a table in BigQuery since BigQuery can directly read the schema from the ORC file. The metadata in an ORC file includes information such as (i.a.):
 
 - The number of rows in the file
 - Column schema
@@ -367,17 +444,14 @@ This essentially allows BigQuery to derive the needed table schema directly from
 
 ## 12. Start an interactive session from Vertex AI workbench (steps 7-9 in README)
 
-***place the screenshot of notebook here***
+<u>Screenshot of notebook</u>:
 
 ![img.png](doc/figures/task12.png)
 
 ## 13. Find and correct the error in spark-job.py
+<u> Error cause</u>: the reason why the spark job did not work was the given name of the bucket in which the data processed by the job should be stored. The solution was to change this name to the name of our bucket in one of the lines in the code of the spark-job.py file.
 
-***describe the cause and how to find the error***
-
-- Cause: the reason why the spark job did not work was the given name of the bucket in which the data processed by the job should be stored. The solution was to change this name to the name of our bucket in one of the lines in the code of the spark-job.py file.
-
-- How to find: in the dataproc jobs logs, where we found out that out spark job fails, we looked into the error message and there was such a log fragment:
+<u> How to find an error </u>: in the dataproc jobs logs, where we found out that out spark job fails, we looked into the error message and there was such a log fragment:
 
 ```bash
 {
@@ -391,7 +465,7 @@ This essentially allows BigQuery to derive the needed table schema directly from
 }
 ```
 
-Corrected code in `spark-job.py`:
+<u>Corrected code</u> in `spark-job.py`:
 
 ```
 
@@ -400,11 +474,11 @@ DATA_BUCKET = "gs://tbd-2023z-304098-data/data/shakespeare/"
 
 ```
 
-After that, the job passed successfully in the dataproc jobs logs:
+After that, <u>the job passed successfully</u> in the dataproc jobs logs:
 
 ![img.png](doc/figures/task13.png)
 
-Also, here are the logs from the sumbition of the job:
+Also, here are the <u>logs from the sumbition of the job</u>:
 
 ```bash
 mszczepanowski@C15581 tbd-2023z-phase1 % gcloud dataproc jobs submit pyspark modules/data-pipeline/resources/spark-job.py --cluster=tbd-cluster --region=europe-west1
@@ -469,12 +543,11 @@ yarnApplications:
 ```
 
 ## 14. Additional tasks using Terraform
+```
+>> 1. Add support for arbitrary machine types and worker nodes for a Dataproc cluster and JupyterLab instance
+```
 
-1. Add support for arbitrary machine types and worker nodes for a Dataproc cluster and JupyterLab instance
-
-***place the link to the modified file and inserted terraform code***
-
-We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
+- We had to change `main.tf`, and `variable.tf` files in the root directory, in the `dataproc` module and in the `vertex-ai-workbench` module.
 
 - In the `dataproc` module we added a new variable `num_workers` in the [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf), which represents number of worker nodes and is set default to 2:
 
@@ -576,81 +649,118 @@ We had to change `main.tf`, and `variable.tf` files in the root directory, in th
   terraform plan -var="vertex_machine_type=e2-medium" -var="dataproc_worker_machine_type=e2-standard-2" -var="dataproc_num_workers=5"
   ```
 
-2. Add support for preemptible/spot instances in a Dataproc cluster
+```
+>> 2. Add support for preemptible/spot instances in a Dataproc cluster
+```
 
-To add preemptible instances we have created new config block inside cluster config in [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file:
+- To add preemptible instances we have created new config block inside cluster config in [`modules/dataproc/main.tf`](modules/dataproc/main.tf) file:
 
-```tf
-preemptible_worker_config {
-    num_instances = var.preemptible_num_workers
-    disk_config {
-      boot_disk_type    = "pd-standard"
-      boot_disk_size_gb = 100
+  ```tf
+  preemptible_worker_config {
+      num_instances = var.preemptible_num_workers
+      disk_config {
+        boot_disk_type    = "pd-standard"
+        boot_disk_size_gb = 100
+      }
     }
+  ```
+- Next thing we need to do was add variable named `preemptible_num_workers` in [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf):
+
+  ```tf
+  variable "preemptible_num_workers" {
+    description = "The number of preemptible worker nodes"
+    type        = number
+    default     = 0
   }
-```
-Next thing we need to do was add variable named `preemptible_num_workers` in [`modules/dataproc/variables.tf`](modules/dataproc/variables.tf):
+  ```
 
-```tf
-variable "preemptible_num_workers" {
-  description = "The number of preemptible worker nodes"
-  type        = number
-  default     = 0
-}
-```
+- Now we move on to root directory, add a new variable to [`variables.tf`](variables.tf) file:
 
-Now we move on to root directory, add a new variable to [`variables.tf`](variables.tf) file:
-
-```tf
-variable "preemptible_num_workers" {
-  type        = number
-  default     = 0
-  description = "Number of preemptible dataproc workers"
-}
-```
-
-Last step is to update module `dataproc` in [`main.tf`](main.tf) in root directory, by setting value to `preemptible_num_workers`:
-
-```tf
-module "dataproc" {
-  depends_on   = [module.vpc]
-  source       = "./modules/dataproc"
-  project_name = var.project_name
-  region       = var.region
-  subnet       = module.vpc.subnets[local.notebook_subnet_id].id
-  machine_type = var.dataproc_worker_machine_type
-  num_workers  = var.dataproc_num_workers
-  preemptible_num_workers = var.preemptible_num_workers
-}
-
-```
-
-3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
-
-***place the link to the modified file and inserted terraform code***
-
-We've changed ony the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
-
-```tf
-  # Enable Secure Boot TASK 14.3
-  shielded_instance_config {
-    enable_secure_boot = true
+  ```tf
+  variable "preemptible_num_workers" {
+    type        = number
+    default     = 0
+    description = "Number of preemptible dataproc workers"
   }
+  ```
 
-  ...
+- Last step is to update module `dataproc` in [`main.tf`](main.tf) in root directory, by setting value to `preemptible_num_workers`:
 
-  # Disable root access TASK 14.3
-  resource "google_project_organization_policy" "disable_root_access" {
-    project    = var.project_name
-    constraint = "constraints/ainotebooks.disableRootAccess"
+  ```tf
+  module "dataproc" {
+    depends_on   = [module.vpc]
+    source       = "./modules/dataproc"
+    project_name = var.project_name
+    region       = var.region
+    subnet       = module.vpc.subnets[local.notebook_subnet_id].id
+    machine_type = var.dataproc_worker_machine_type
+    num_workers  = var.dataproc_num_workers
+    preemptible_num_workers = var.preemptible_num_workers
+  }
+  ```
 
-    boolean_policy {
-      enforced = true
+```
+>> 3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
+```
+
+- We've changed the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
+
+  ```tf
+    # Enable Secure Boot TASK 14.3
+    shielded_instance_config {
+      enable_secure_boot = true
     }
-  }
+
+    ...
+  ```
+
+- To disable sudo access we've added to the end of the [`modules/vertex-ai-workbench/resources/notebook_post_startup_script.sh`](modules/vertex-ai-workbench/resources/notebook_post_startup_script.sh) file:
+
+  ```sh
+  # remove sudo privileges from user
+  sudo deluser $USER sudo
+  ```
+
+```txt
+>> 4. (Optional) Get access to Apache Spark WebUI
 ```
 
+- We didn't modify any terraform code. Instead, we've accessed cluster with command:
+  
+    ```bash
+    gcloud compute ssh --zone "europe-west1-b" "tbd-cluster-m" \
+    --tunnel-through-iap \
+    --project "tbd-2023z-304098"
+    ```
 
-4. (Optional) Get access to Apache Spark WebUI
+- Where we've run spark shell inside the cluster:
 
-***place the link to the modified file and inserted terraform code***
+    ```bash
+    spark-shell
+    ```
+
+- And we could observe the Web UI available at 44405 port:
+
+  ![img.png](doc/figures/task14_4_1.png)
+
+- To access the Web UI from our local machine we've created proxy with command (similar to YARN UI):
+
+  ```bash
+  gcloud compute ssh tbd-cluster-m \
+  --project=tbd-2023z-304098 \
+  --zone=europe-west1-b -- -D 1080 -N
+  ```
+
+- And we've accessed the Web UI with:
+
+  ```bash
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --proxy-server="socks5://localhost:1080" \
+  --user-data-dir="/tmp/tbd-cluster-m" http://tbd-cluster-m.c.tbd-2023z-304098.internal.:8088/proxy/application_1701561377793_0013/jobs/
+  ```
+
+TODO: check this
+
+- Reached Spark Web UI:
+
+  ![img.png](doc/figures/task14_4_2.png)
