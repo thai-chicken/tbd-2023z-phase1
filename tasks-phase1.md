@@ -29,7 +29,7 @@
 
 ```
 - resource "google_storage_bucket" "tbd-data-bucket" -> the bucket to store data. Set the following properties:
-  - project  // look for variable in variables.tf
+  - project  // look for variable in variables.tfł
   - name  // look for variable in variables.tf
   - location // look for variable in variables.tf
   - uniform_bucket_level_access = false #tfsec:ignore:google-storage-enable-ubla
