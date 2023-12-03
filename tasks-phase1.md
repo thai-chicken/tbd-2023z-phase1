@@ -187,7 +187,11 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 - Description of network communication (ports, why it is necessary to specify the host for the driver) of Apache Spark running from Vertex AI Workbech
 ```
 
-TODO: add descriptions
+Specifying the host for the driver is essential for a few key reasons:
+1. Resource Allocation: The driver needs to communicate with the master to allocate resources across worker nodes. Specifying the host ensures the driver is reachable for this coordination.
+2. Task Distribution and Management: The driver divides the application into tasks and schedules them on workers. Knowing the driver's host helps manage this distribution effectively.
+3. Fault Tolerance: In case of failures, the system needs to know the driver's location to restart or move tasks, ensuring resilience and continuity of operations.
+4. Data Flow Optimization: For efficient data transfer between the nodes, the network topology must be known, which includes the driver's location.
 
 
 ![img.png](doc/figures/TBD_task_8_diagram.png)
@@ -403,7 +407,6 @@ Project: thai-chicken/tbd-2023z-phase1
 - **Long-term commitment**: we could commit to a long-term contract with Google Cloud, which would give us a discount on the services used.
 - **Deleting resources**: we could delete resources that are not used and only invoke them when needed, especially since we use Terraform.
 - **Move to another region**: we could move our infrastructure to another region, where the prices are lower.
-- **Spot instances**: we could use spot instances in Dataproc and Vertex AI Workbench, which are cheaper than standard instances, but can be terminated at any time.
 
 ## 11. Create a BigQuery dataset and an external table
 
