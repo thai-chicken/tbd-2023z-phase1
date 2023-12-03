@@ -187,12 +187,23 @@ SSH tunnel is created using local port 1080 and in Chrome we can connect through
 - Description of network communication (ports, why it is necessary to specify the host for the driver) of Apache Spark running from Vertex AI Workbech
 ```
 
+<u>Components of service accounts</u>:
+
+A Service Account is a special type of account used by an application or a service (to act on its behalf) to make authorized API calls. This account is not intended for direct user access but is associated with the application or service. Our project uses the following service accounts:
+
+1. **Terraform Service Account (Terraform SA)** - used to authenticate and authorize Terraform to manage resources on a cloud provider platform. It allows Terraform to create, update, and delete resources.
+2. **Google Cloud Composer Service Account (Composer SA)** - used by Google Cloud Composer to access various Google Cloud resources such as Google Cloud Storage, BigQuery, etc. It is necessary for executing and managing workflows that interact with these services.
+3. **Infrastructure as Code Service Account (IaC SA)** - used by IaC tools to automate the provisioning and configuration of infrastructure. In GitHub Actions, we use IaC SA to authenticate and execute actions such as deploying infrastructure when a pull request is merged.
+
+<u>Network communication</u>:
+
 Specifying the host for the driver is essential for a few key reasons:
 1. Resource Allocation: The driver needs to communicate with the master to allocate resources across worker nodes. Specifying the host ensures the driver is reachable for this coordination.
 2. Task Distribution and Management: The driver divides the application into tasks and schedules them on workers. Knowing the driver's host helps manage this distribution effectively.
 3. Fault Tolerance: In case of failures, the system needs to know the driver's location to restart or move tasks, ensuring resilience and continuity of operations.
 4. Data Flow Optimization: For efficient data transfer between the nodes, the network topology must be known, which includes the driver's location.
 
+<u>Diagram</u>:
 
 ![img.png](doc/figures/TBD_task_8_diagram.png)
 
@@ -706,7 +717,7 @@ yarnApplications:
 >> 3. Perform additional hardening of Jupyterlab environment, i.e. disable sudo access and enable secure boot
 ```
 
-- We've changed the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
+- To enable secure boot, we've changed the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file, where we put:
 
   ```tf
     # Enable Secure Boot TASK 14.3
@@ -717,11 +728,13 @@ yarnApplications:
     ...
   ```
 
-- To disable sudo access we've added to the end of the [`modules/vertex-ai-workbench/resources/notebook_post_startup_script.sh`](modules/vertex-ai-workbench/resources/notebook_post_startup_script.sh) file:
+- To disable sudo access to an instance we've changed metadata in the [`modules/vertex-ai-workbench/main.tf`](modules/vertex-ai-workbench/main.tf) file:
 
   ```sh
-  # remove sudo privileges from user
-  sudo deluser $USER sudo
+    metadata = {
+      vmDnsSetting : "GlobalDefault"
+      notebook-disable-root = true
+    }
   ```
 
 ```txt
