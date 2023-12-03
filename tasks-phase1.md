@@ -359,7 +359,7 @@ Project: thai-chicken/tbd-2023z-phase1
 
 <u>Detailed estimation:</u>
 
-**DISCLAIMER: We assumed that our infrastructure is running a whole month, which equals $730$ hours. Also, since our Cloud Composer's number of workers is between $1$ and $3$, we chose $2$ as avarage number of workers.**
+**DISCLAIMER: We assumed that our infrastructure is running a whole month, which equals $730$ hours. Also, since our Cloud Composer's number of workers is scalable between $1$ and $3$, we chose $2$ as avarage number of workers.**
 
 1. Cloud Composer
 
@@ -378,9 +378,9 @@ Project: thai-chicken/tbd-2023z-phase1
 |---------------------|----------------------------|-------------------|----------------|-----------------|-----------:|
 | Dataproc            | Compute Engine (master) | 1x e2-standard-2     | $0.0737 / hour        | 730.00   |     $53.81 |
 | Dataproc            | Compute Engine (worker) | 2x e2-standard-2     | $0.0737 / hour | 1460.00 |            $107.62 |
-| Dataproc            | DataProc Service           | 730 hours x 2 vCPUs x 3 engines   | $0.010 per vCPU / hour |     4380.00            |     $43.80 |
-| Dataproc            | Persistent Disk            | Zonal standard PD, 100 GiB x 3 engines |        $0.04 per GB / month        |         300.000 |     $12.00 |
-| --            | --                        | --    | -- | -- |    **$217.23** |
+| Dataproc            | DataProc Service        | 730 hours x 2 vCPUs x 3 engines   | $0.010 per vCPU / hour |     4380.00            |     $43.80 |
+| Dataproc            | Persistent Disk         | Zonal standard PD, 100 GiB x 3 engines |        $0.04 per GB / month        |         300.000 |     $12.00 |
+| --                  | --                      | --                | -- | -- |    **$217.23** |
 
 
 3. Vertex AI Workbench
@@ -397,7 +397,13 @@ Project: thai-chicken/tbd-2023z-phase1
 
 <u>Options for a cost optimization</u>
 
-TODO: give options
+- **Reducing number of workers**: we could reduce the number of Airflow workers to only one in Cloud composer or use only one worker in Dataproc.
+- **Preemptible/spot VMs**: we could use preemptible VMs for Dataproc and Vertex AI Workbench, which are cheaper than standard workers, but can be terminated at any time.
+- **Cheaper machine types**: we could use more relevant to requirements machine types in Dataproc and Vertex AI Workbench.
+- **Long-term commitment**: we could commit to a long-term contract with Google Cloud, which would give us a discount on the services used.
+- **Deleting resources**: we could delete resources that are not used and only invoke them when needed, especially since we use Terraform.
+- **Move to another region**: we could move our infrastructure to another region, where the prices are lower.
+- **Spot instances**: we could use spot instances in Dataproc and Vertex AI Workbench, which are cheaper than standard instances, but can be terminated at any time.
 
 ## 11. Create a BigQuery dataset and an external table
 
