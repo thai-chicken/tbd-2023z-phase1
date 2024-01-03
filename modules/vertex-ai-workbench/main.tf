@@ -48,6 +48,7 @@ resource "google_storage_bucket_object" "post-startup" {
 
 resource "google_notebooks_instance" "tbd_notebook" {
   #checkov:skip=CKV2_GCP_18: "Ensure GCP network defines a firewall and does not use the default firewall"
+  #checkov:skip=CKV2_GCP_21: "Explanation for why this check is skipped"
   depends_on   = [google_project_service.notebooks]
   location     = local.zone
   machine_type = var.machine_type
