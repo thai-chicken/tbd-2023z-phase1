@@ -1,4 +1,4 @@
-# TBD-2023-phase1
+# TBD-2023
 
 ## Phase1 goals
 1. Learn how to provision computing resources for running Big Data analyses using the Infrastructure as Code (IaC) approach.
