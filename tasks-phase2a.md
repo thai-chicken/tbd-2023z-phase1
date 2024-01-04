@@ -45,9 +45,13 @@ a) setup Vertex AI Workbench `pyspark` kernel as described in point [8](https://
 
 b) upload [tpc-di-setup.ipynb](https://github.com/bdg-tbd/tbd-workshop-1/blob/v1.0.36/notebooks/tpc-di-setup.ipynb) to the running instance of your Vertex AI Workbench
 
+![img.png](doc/figures/phase2a_task3.png)
+
 # 4. In `tpc-di-setup.ipynb` modify cell under section ***Clone tbd-tpc-di repo***:
 
 a) first, fork <https://github.com/mwiewior/tbd-tpc-di.git> to your github organization.
+
+* Forked repo link: <https://github.com/thai-chicken/tbd-2023z-phase1>
 
 b) create new branch (e.g. 'notebook') in your fork of tbd-tpc-di and modify profiles.yaml by commenting following lines:
 
@@ -61,6 +65,8 @@ b) create new branch (e.g. 'notebook') in your fork of tbd-tpc-di and modify pro
 This lines are required to run dbt on airflow but have to be commented while running dbt in notebook.
 
 c) update git clone command to point to ***your fork***.
+
+Link to the notebook: [tpc-di-setup.ipynb](https://github.com/thai-chicken/tbd-2023z-phase1/blob/master/notebooks/tpc-di-setup-dev.ipynb)
 
 # 5. Access Vertex AI Workbench and run cell by cell notebook `tpc-di-setup.ipynb`
 
