@@ -34,7 +34,7 @@ Worth to read:
 * Forked repo link: <https://github.com/thai-chicken/tbd-2023z-phase1>
 
 # 2. Replace your root `main.tf`
-
+ 
 From the phase 1 with [main.tf](https://github.com/bdg-tbd/tbd-workshop-1/blob/v1.0.36/main.tf) and change each module `source` reference from the repo relative path to a github repo tag `v1.0.36`.
 
 Changed file: [main.tf](https://github.com/thai-chicken/tbd-2023z-phase1/blob/master/main.tf)
