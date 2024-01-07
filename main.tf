@@ -13,7 +13,7 @@ locals {
   dbt_version             = "1.7.3"
   dbt_spark_version       = "1.7.1"
   dbt_git_repo            = "https://github.com/thai-chicken/tbd-tpc-di.git"
-  dbt_git_repo_branch     = "notebook"
+  dbt_git_repo_branch     = "master"
 }
 
 module "vpc" {
