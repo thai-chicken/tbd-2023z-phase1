@@ -163,7 +163,14 @@ Using SQL commands we managed to see all the databases created:
 
 # 6. Explore files created by generator and describe them, including format, content, total size
 
-***Files desccription***
+Files created by a generator are in tbd-2023z-304098-data/tpc-di bucket.
+There is 217 files of total size 960.2MiB in four types:
+- 11 .txt files. With size between 89B for StatusType.txt to 295.2MiB for DailyMarket.txt. Five largest files in bucket are .txt files with size over 100MiB each. Files contain structured data, columns are separated using '|'. There is no headers in files and any other information about columns.
+- 2 .csv files:
+    -  Prospect.csv(10MiB) - It primarily contains personal data such as username, first name, surname and address. No header or information on the names of individual columns.
+    -  HR.csv(3.9MiB) - It consists of 9 columns, just like the previous file without the header. It contains a column with id and, among other personal information: first name, last name and postal code.
+- 1 CustomerMgmt.xml file(29.7MiB). Also includes personal data such as name, address and email addresses. When attempting to read the data by downloading it, we see that it is poorly structured, with rows and columns difficult to extract.
+- 207 octet-stream files. All file names consist of the prefix FINWIRE and the period to which they relate (year and quarter). Size of files is between 57.6 KiB for FINWIRE1967Q3 to 968.4KiB for FINWIER2017Q3, there is a noticeable trend that the later the file refers to the larger it is. They contain mainly columns with numerical data, no information on column names, successive columns are separated using whitespace characters. The last rows in the files differ from the others and contain information about locations.
 
 # 7. Analyze tpcdi.py. What happened in the loading stage?
 
@@ -210,7 +217,36 @@ Result:
 
 # 9. Add some 3 more [dbt tests](https://docs.getdbt.com/docs/build/tests) and explain what you are testing. ***Add new tests to your repository.***
 
-***Code and description of your tests***
+* Test 1 <br>
+
+This SQL query tests for the presence of null values in the first_name and last_name columns of a table. It selects all records where either first_name or last_name is missing (i.e., is null).
+
+The purpose of this test is to ensure data completeness, especially in cases where having both a first and last name is considered mandatory for each record in the table. 
+```sql
+SELECT *
+FROM {{ ref('dim_broker') }} 
+WHERE first_name IS NULL AND last_name IS NULL
+```
+
+* Test 2 <br>
+
+This SQL code is a query designed to test data consistency in a table. It checks whether records marked as currently active (IS_CURRENT = true) have their end timestamp (end_timestamp) set to a specific value, which in this case is '9999-12-31 23:59:59.999'.
+
+The '9999-12-31 23:59:59.999' value is often used in databases to represent an 'indefinite' or 'unspecified' end date, suggesting that the record is still active.
+```sql
+SELECT *
+FROM {{ ref('dim_trade') }} 
+WHERE is_current = true AND end_timestamp != '9999-12-31 23:59:59.999'
+```
+
+* Test 3 <br>
+
+The purpose of this SQL test is to ensure data integrity in a table where there are two date fields: sk_date_placed and sk_date_removed. The test aims to verify that the sk_date_placed (the date an item was placed) is always earlier than or equal to sk_date_removed (the date the item was removed), under the condition where sk_date_removed is not null.
+```sql
+SELECT *
+FROM {{ ref('fact_watches') }} 
+WHERE sk_date_removed IS NOT NULL AND sk_date_placed > sk_date_removed
+```
 
 # 10. In main.tf update
 
