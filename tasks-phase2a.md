@@ -262,6 +262,7 @@ so dbt_git_repo points to your fork of tbd-tpc-di.
 # 11. Redeploy infrastructure and check if the DAG finished with no errors
 
 ***The screenshot of Apache Aiflow UI***
+![img.png](doc/figures/task11_phase2_airflow_success.png)
 
 > The goal of next tasks is to perform benchmarking/scalability tests of sample three-tier lakehouse solution.
 
