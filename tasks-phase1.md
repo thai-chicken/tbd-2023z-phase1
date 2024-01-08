@@ -3,8 +3,8 @@
 ### 1.1. Team
 
 - Łukasz Staniszewski
-- Albert Ściseł
 - Mateusz Szczepanowski
+- Albert Ściseł
 
 ### 1.2. Info
 
