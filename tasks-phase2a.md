@@ -299,6 +299,17 @@ so dbt_git_repo points to your fork of tbd-tpc-di.
 
 >In the notebook, collect console output from dbt run, then parse it and retrieve total execution time and execution times of processing each model. Save the results from each number of executors.
 
+We copied cell output to .txt files and run python script to retrieve necessary information. Results are shown below (visualization).
+
 # 16. Analyze
 
 > Analyze the performance and scalability of execution times of each model. Visualize and discucss the final results.
+
+![img.png](doc/figures/models_benchmarking.png)
+![img.png](doc/figures/number_of_executors_benchmarking.png)
+
+1. **Overall trend of decreased total execution time with more executors**: <br> Generally, increasing the number of executors leads to a reduction in total execution time. This trend is evident in the comparison of total times across files processed with different numbers of executors.
+
+2. **Inconsistent impact on individual models**:<br> While the overall trend favors more executors, individual models show varying responses. For example, models like demo_silver.daily_market and demo_silver.trades_history, which potentially involve extensive data processing or complex calculations, exhibit significant time reduction with more executors, while some did not, like demo_silver.accounts.
+
+3. **Optimal executor allocation depends on model complexity**: <br> The data indicates that the optimal number of executors is not a one-size-fits-all but should be determined based on the specific requirements and complexity of each model. While models like demo_silver.daily_market may benefit significantly from a higher number of execitors, simpler models like demo_bronze.crm_customer_mgmt may achieve optimal performance with fewer executors.
