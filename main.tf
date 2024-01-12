@@ -105,7 +105,7 @@ module "dbt_docker_image" {
 }
 
 module "data-pipelines" {
-  source               = "./modules/data-pipeline"
+  source               = "github.com/bdg-tbd/tbd-workshop-1.git?ref=v1.0.36/modules/data-pipeline"
   project_name         = var.project_name
   region               = var.region
   bucket_name          = local.code_bucket_name
