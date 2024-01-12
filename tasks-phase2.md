@@ -257,12 +257,13 @@ dbt_git_repo_branch     = "main"
 
 so dbt_git_repo points to your fork of tbd-tpc-di.
 
-
-
 # 11. Redeploy infrastructure and check if the DAG finished with no errors
 
-***The screenshot of Apache Aiflow UI***
-![img.png](doc/figures/task11_phase2_airflow_success.png)
+> ***The screenshot of Apache Aiflow UI***
+
+Right after creating tables using provided notebook, we run the DAG. It finished with success.
+
+![img.png](doc/figures/phase2a_task11_airflow_success.png)
 
 > The goal of next tasks is to perform benchmarking/scalability tests of sample three-tier lakehouse solution.
 
@@ -308,8 +309,9 @@ We copied cell output to .txt files and run python script to retrieve necessary 
 ![img.png](doc/figures/models_benchmarking.png)
 ![img.png](doc/figures/number_of_executors_benchmarking.png)
 
-1. **Overall trend of decreased total execution time with more executors**: <br> Generally, increasing the number of executors leads to a reduction in total execution time. This trend is evident in the comparison of total times across files processed with different numbers of executors.
+1. **Overall trend of decreased total execution time with more executors**: <br> Generally, increasing the number of executors **up to a certain point** leads to a reduction in total execution time. This trend is evident in the comparison of total times across files processed with different numbers of executors, but the impact isn't that clear when comparing 5 executors workload with 10 executors workload - it may be happening because we have only 2 workers in dataproc and there are more executor instances than workers, which means some executors may wait on others and waste their time then.
 
 2. **Inconsistent impact on individual models**:<br> While the overall trend favors more executors, individual models show varying responses. For example, models like demo_silver.daily_market and demo_silver.trades_history, which potentially involve extensive data processing or complex calculations, exhibit significant time reduction with more executors, while some did not, like demo_silver.accounts.
+We cannot see impact of more executors when looking onto models with shortest processing times.
 
 3. **Optimal executor allocation depends on model complexity**: <br> The data indicates that the optimal number of executors is not a one-size-fits-all but should be determined based on the specific requirements and complexity of each model. While models like demo_silver.daily_market may benefit significantly from a higher number of execitors, simpler models like demo_bronze.crm_customer_mgmt may achieve optimal performance with fewer executors.
