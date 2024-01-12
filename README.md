@@ -127,7 +127,7 @@ terraform destroy -no-color -var-file env/project.tfvars
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_composer"></a> [composer](#module\_composer) | github.com/bdg-tbd/tbd-workshop-1.git | v1.0.36/modules/composer |
-| <a name="module_data-pipelines"></a> [data-pipelines](#module\_data-pipelines) | ./modules/data-pipeline | n/a |
+| <a name="module_data-pipelines"></a> [data-pipelines](#module\_data-pipelines) | github.com/bdg-tbd/tbd-workshop-1.git | v1.0.36/modules/data-pipeline |
 | <a name="module_dataproc"></a> [dataproc](#module\_dataproc) | github.com/bdg-tbd/tbd-workshop-1.git | v1.0.36/modules/dataproc |
 | <a name="module_dbt_docker_image"></a> [dbt\_docker\_image](#module\_dbt\_docker\_image) | github.com/bdg-tbd/tbd-workshop-1.git | v1.0.36/modules/dbt_docker_image |
 | <a name="module_gcr"></a> [gcr](#module\_gcr) | github.com/bdg-tbd/tbd-workshop-1.git | v1.0.36/modules/gcr |
